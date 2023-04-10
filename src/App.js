@@ -29,13 +29,23 @@ class App extends Component {
       this.setState({ message: "Waiting on transaction success..." });
       // Send transaction to network
       await lottery.methods.enter().send({
-        from: account[0],
+        from: this.state.manager,
         value: web3.utils.toWei(this.state.value, "ether"),
       });
       this.setState({
         message: "Congratulations! You have entered the lottery.",
       });
     }
+  };
+
+  onClick = async (event) => {
+    // Retrieve Metamask user account
+    const accounts = await web3.eth.getAccounts();
+    this.setState({ message: "Waiting on transaction success..." });
+    await lottery.methods.pickWinner().send({
+      from: accounts[0],
+    });
+    this.setState({ message: "A winner has been picked!" });
   };
 
   render() {
@@ -62,6 +72,8 @@ class App extends Component {
         </form>
         <hr></hr>
         <h1>{this.state.message}</h1>
+        <h4>Ready to pick a winner?</h4>
+        <button onClick={this.onClick}>Pick a winner!</button>
       </div>
     );
   }
